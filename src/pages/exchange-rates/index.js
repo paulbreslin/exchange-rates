@@ -10,8 +10,11 @@ class ExchangeRates extends Component {
   state = {
     selectedCurrencyCode: 'EUR',
     selectedDate: '2019-5-05',
-    rates: {}
+    rates: {},
+    showError: false
   };
+
+  genericErrorMessage = 'Oops. Something went wrong.';
 
   componentDidMount() {
     this.fetchExchangeData();
@@ -38,31 +41,37 @@ class ExchangeRates extends Component {
   fetchExchangeData = async () => {
     const { selectedDate: date, selectedCurrencyCode: currency } = this.state;
     try {
+      // Reset error state
+      this.setState({
+        showError: false
+      });
+
       const exchangeRequest = await fetch(
         `https://api.exchangeratesapi.io/${date}?base=${currency}`
       );
 
       if (!exchangeRequest.ok) {
-        console.log('error', exchangeRequest);
-        // TODO - Handle request
+        this.setState({
+          showError: true
+        });
+        // Log to error reporting service
       }
 
       const exchangeResponse = await exchangeRequest.json();
 
-      this.setState(
-        {
-          rates: Object.entries(exchangeResponse.rates)
-        },
-        () => console.log(this.state)
-      );
+      this.setState({
+        rates: Object.entries(exchangeResponse.rates)
+      });
     } catch (error) {
-      // TODO - Request failed
-      console.log('big error', error);
+      this.setState({
+        showError: true
+      });
+      // Log to error reporting service
     }
   };
 
   render() {
-    const { selectedCurrencyCode, selectedDate, rates } = this.state;
+    const { selectedCurrencyCode, selectedDate, rates, showError } = this.state;
     const showRates = Boolean(rates.length);
 
     return (
@@ -86,6 +95,7 @@ class ExchangeRates extends Component {
             ))}
           </div>
         )}
+        {showError && <p>{this.genericErrorMessage}</p>}
       </div>
     );
   }
