@@ -16,7 +16,8 @@ class ExchangeRates extends Component {
     selectedCurrencyCode: 'EUR',
     selectedDate: Date.now(),
     rates: {},
-    showError: false
+    showError: false,
+    showLoading: false
   };
 
   genericErrorMessage = 'Oops. Something went wrong.';
