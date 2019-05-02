@@ -1,0 +1,20 @@
+.app {
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  width: 100%;
+  max-width: 600px;
+  padding-bottom: 32px;
+}
+
+.nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.nav li {
+  display: inline-block;
+  padding-right: 16px;
+}
