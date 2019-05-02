@@ -1,3 +1,5 @@
 import React from 'react';
 
-export default () => <div>About</div>;
+export default () => (
+  <p>An exchange rates app with a somewhat spartan design.</p>
+);

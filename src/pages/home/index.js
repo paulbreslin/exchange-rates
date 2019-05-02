@@ -1,3 +1,3 @@
 import React from 'react';
 
-export default () => <div>Home</div>
+export default () => <p>The homepage of the exchange rates app.</p>;
