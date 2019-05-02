@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "folder_exclude_patterns": ["node_modules"]
+    }
+  ],
+  "settings": {
+    "js_prettier": {
+      // Doesn't resolve path from local node_modules directory
+      "prettier_cli_path": "~/.nvm/versions/node/v11.13.0/bin/prettier",
+      "node_path": "~/.nvm/versions/node/v11.13.0/bin/node",
+      "auto_format_on_save": true,
+      "prettier_options": {
+        "singleQuote": true
+      }
+    },
+    "SublimeLinter.linters.eslint.env": {
+      "PATH": "~/.nvm/versions/node/v11.13.0/bin"
+    },
+    "SublimeLinter.linters.flow.disable": true
+  }
+}
