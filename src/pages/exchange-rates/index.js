@@ -1,15 +1,20 @@
 import React, { Component } from 'react';
+import DatePicker from 'react-datepicker';
+import format from 'date-fns/format';
+import cc from 'currency-codes';
+import 'react-datepicker/dist/react-datepicker.css';
 
 /*
   Whitelist of supported codes retrieved from:
   https://github.com/benmajor/ExchangeRatesAPI#5-supported-currencies
 */
-import cc from './currency-codes.json';
+import currencyWhitelist from './currency-codes.json';
+import styles from './styles.module.css';
 
 class ExchangeRates extends Component {
   state = {
     selectedCurrencyCode: 'EUR',
-    selectedDate: '2019-5-05',
+    selectedDate: Date.now(),
     rates: {},
     showError: false
   };
@@ -29,20 +34,22 @@ class ExchangeRates extends Component {
     );
   };
 
-  onDateChange = ({ target: { value: selectedDate } }) => {
+  onDateChange = value => {
     this.setState(
       {
-        selectedDate
+        selectedDate: value
       },
       this.fetchExchangeData
     );
   };
 
   fetchExchangeData = async () => {
-    const { selectedDate: date, selectedCurrencyCode: currency } = this.state;
+    const { selectedDate, selectedCurrencyCode: currency } = this.state;
+    const date = format(selectedDate, 'YYYY-MM-DD');
     try {
       // Reset error state
       this.setState({
+        showLoading: true,
         showError: false
       });
 
@@ -60,10 +67,12 @@ class ExchangeRates extends Component {
       const exchangeResponse = await exchangeRequest.json();
 
       this.setState({
+        showLoading: false,
         rates: Object.entries(exchangeResponse.rates)
       });
     } catch (error) {
       this.setState({
+        showLoading: false,
         showError: true
       });
       // Log to error reporting service
@@ -71,31 +80,48 @@ class ExchangeRates extends Component {
   };
 
   render() {
-    const { selectedCurrencyCode, selectedDate, rates, showError } = this.state;
+    const {
+      selectedCurrencyCode,
+      selectedDate,
+      rates,
+      showError,
+      showLoading
+    } = this.state;
     const showRates = Boolean(rates.length);
 
     return (
       <div>
-        Exchange rates
         <select
           onChange={this.onCurrencyCodeChange}
           value={selectedCurrencyCode}
         >
-          {cc.codes.map(code => (
+          {currencyWhitelist.codes.map(code => (
             <option value={code}>{code}</option>
           ))}
         </select>
-        <input type="date" value={selectedDate} onChange={this.onDateChange} />
-        {showRates && (
-          <div>
-            {rates.map(rate => (
-              <div>
-                {rate[0]} {rate[1]}
-              </div>
-            ))}
-          </div>
+        <DatePicker selected={selectedDate} onChange={this.onDateChange} />
+        {showLoading && <p>Loading...</p>}
+        {showRates && !showError && !showLoading && (
+          <table className={styles.rates}>
+            <thead>
+              <th>Currency</th>
+              <th />
+              <th>Rate</th>
+            </thead>
+            <tbody>
+              {rates.map(rate => (
+                <tr>
+                  <td>{rate[0]}</td>
+                  <td>{cc.code(rate[0]).currency}</td>
+                  <td>{rate[1]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
-        {showError && <p>{this.genericErrorMessage}</p>}
+        {showError && (
+          <p className={styles.error}>{this.genericErrorMessage}</p>
+        )}
       </div>
     );
   }

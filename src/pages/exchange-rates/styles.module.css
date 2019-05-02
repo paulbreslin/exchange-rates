@@ -1,0 +1,18 @@
+.rates {
+  margin: 16px 0;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.rates th,
+.rates td {
+  padding: 4px 8px;
+}
+
+.rates tr:hover {
+  background: #ccc;
+}
+
+.error {
+  color: crimson;
+}
